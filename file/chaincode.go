@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"github.com/hyperledger/fabric/protos/peer"
+	"github.com/hyperledger/fabric-chaincode-go/shim"
+	"github.com/hyperledger/fabric-protos-go/peer"
 )
 
 // we implement chaincode under 'ourChain' structure
@@ -31,7 +31,7 @@ type entry struct {
 func main() {
 	err := shim.Start(new(ourChain))
 	if err != nil {
-		fmt.Print("Error starting the chaincode, reason: %s", err)
+		fmt.Print("Error starting the chaincode, reason:", err)
 	}
 }
 
@@ -52,7 +52,7 @@ func (v *ourChain) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 	} else if function == "readEntry" {
 		return v.readEntry(stub, arguments)
 	} else if function == "deleteEntry" {
-		return v.deleteEntry(stub, arguments)	
+		return v.deleteEntry(stub, arguments)
 	} else if function == "searchByOwner" {
 		return v.searchByOwner(stub, arguments)
 	}
@@ -95,7 +95,7 @@ func (v *ourChain) initEntry(stub shim.ChaincodeStubInterface, arguments []strin
 	updated, err := strconv.Atoi(arguments[5])
 
 	//make sure that updated is a number, 0 or 1
-	if (updated != 0 && updated != 1) {
+	if updated != 0 && updated != 1 {
 		return shim.Error("Invalid entry for updated")
 	}
 
@@ -132,7 +132,7 @@ func (v *ourChain) initEntry(stub shim.ChaincodeStubInterface, arguments []strin
 	value := []byte{0x00}
 	stub.PutState(indicesKey, value)
 
- 	//register event
+	//register event
 	err = stub.SetEvent("initEvent", []byte{})
 	if err != nil {
 		return shim.Error(err.Error())
@@ -147,7 +147,7 @@ func (v *ourChain) initEntry(stub shim.ChaincodeStubInterface, arguments []strin
 func (v *ourChain) readEntry(stub shim.ChaincodeStubInterface, arguments []string) peer.Response {
 	var id, jsonResponse string
 	var err error
-	
+
 	fmt.Println("reached")
 	//check for length
 	if len(arguments) != 1 {
@@ -203,7 +203,6 @@ func (v *ourChain) deleteEntry(stub shim.ChaincodeStubInterface, arguments []str
 	if err != nil {
 		return shim.Error(err.Error())
 	}
-
 
 	return shim.Success(nil)
 }
